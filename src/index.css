@@ -1,0 +1,119 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 6%;
+    --foreground: 0 0% 87%;
+
+    --card: 0 0% 9%;
+    --card-foreground: 0 0% 87%;
+
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 87%;
+
+    --primary: 0 0% 87%;
+    --primary-foreground: 0 0% 6%;
+
+    --secondary: 0 0% 13%;
+    --secondary-foreground: 0 0% 55%;
+
+    --muted: 0 0% 11%;
+    --muted-foreground: 0 0% 45%;
+
+    --accent: 0 0% 15%;
+    --accent-foreground: 0 0% 87%;
+
+    --destructive: 0 60% 48%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 14%;
+    --input: 0 0% 14%;
+    --ring: 0 0% 40%;
+
+    --radius: 0.375rem;
+
+    /* Status — desaturated, functional */
+    --status-online: 142 50% 45%;
+    --status-offline: 0 50% 48%;
+    --status-warning: 38 60% 50%;
+    --status-idle: 0 0% 40%;
+
+    --surface-elevated: 0 0% 10%;
+    --surface-overlay: 0 0% 12%;
+
+    --shadow-card: 0 1px 2px 0 rgba(0,0,0,0.3);
+
+    --font-display: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+
+    --sidebar-background: 0 0% 5%;
+    --sidebar-foreground: 0 0% 50%;
+    --sidebar-primary: 0 0% 87%;
+    --sidebar-primary-foreground: 0 0% 6%;
+    --sidebar-accent: 0 0% 11%;
+    --sidebar-accent-foreground: 0 0% 87%;
+    --sidebar-border: 0 0% 12%;
+    --sidebar-ring: 0 0% 40%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-display);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  code, .font-mono {
+    font-family: var(--font-mono);
+  }
+}
+
+@layer utilities {
+  .text-status-online {
+    color: hsl(var(--status-online));
+  }
+  .text-status-offline {
+    color: hsl(var(--status-offline));
+  }
+  .text-status-warning {
+    color: hsl(var(--status-warning));
+  }
+  .text-status-idle {
+    color: hsl(var(--status-idle));
+  }
+  .bg-status-online {
+    background-color: hsl(var(--status-online));
+  }
+  .bg-status-offline {
+    background-color: hsl(var(--status-offline));
+  }
+  .bg-status-warning {
+    background-color: hsl(var(--status-warning));
+  }
+  .bg-surface-elevated {
+    background-color: hsl(var(--surface-elevated));
+  }
+  .bg-surface-overlay {
+    background-color: hsl(var(--surface-overlay));
+  }
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border)) transparent;
+  }
+}
