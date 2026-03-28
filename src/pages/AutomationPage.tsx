@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Plus, Zap, Clock } from 'lucide-react';
+import { Plus, Zap, Clock, Trash2 } from 'lucide-react';
 import { mockAutomations, AutomationRule } from '@/data/mockDevices';
 import NewRuleModal from '@/components/automation/NewRuleModal';
+import { toast } from 'sonner';
 
 function timeAgo(dateStr?: string) {
   if (!dateStr) return 'Never';
@@ -20,6 +21,12 @@ export default function AutomationPage() {
     setRules(prev => prev.map(r => r.id === id ? { ...r, enabled: !r.enabled } : r));
   };
 
+  const removeRule = (id: string) => {
+    const rule = rules.find(r => r.id === id);
+    setRules(prev => prev.filter(r => r.id !== id));
+    toast.success(`"${rule?.name}" removida`);
+  };
+
   const addRule = (data: { name: string; trigger: string; action: string }) => {
     const newRule: AutomationRule = {
       id: String(Date.now()),
@@ -29,6 +36,7 @@ export default function AutomationPage() {
       action: data.action,
     };
     setRules(prev => [newRule, ...prev]);
+    toast.success(`"${data.name}" criada`);
   };
 
   return (
@@ -36,11 +44,11 @@ export default function AutomationPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-lg font-medium text-foreground">Automation</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">Local automation rules</p>
+          <p className="text-sm text-muted-foreground mt-0.5">{rules.length} rules · {rules.filter(r => r.enabled).length} active</p>
         </div>
         <button
           onClick={() => setModalOpen(true)}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-foreground text-background text-sm font-medium hover:bg-foreground/90 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-foreground text-background text-sm font-medium hover:bg-foreground/90 transition-colors"
         >
           <Plus className="w-3.5 h-3.5" />
           New Rule
@@ -51,32 +59,42 @@ export default function AutomationPage() {
         {rules.map((rule) => (
           <div
             key={rule.id}
-            className={`bg-card rounded-lg border border-border p-4 transition-opacity ${!rule.enabled ? 'opacity-40' : ''}`}
+            className={`group bg-card rounded-lg border border-border p-4 transition-all hover:border-muted-foreground/15 ${!rule.enabled ? 'opacity-40' : ''}`}
           >
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2.5">
-                <Zap className="w-4 h-4 text-muted-foreground" />
+                <div className="w-7 h-7 rounded-md bg-muted flex items-center justify-center">
+                  <Zap className={`w-3.5 h-3.5 ${rule.enabled ? 'text-status-warning' : 'text-muted-foreground'}`} />
+                </div>
                 <h3 className="text-sm font-medium text-foreground">{rule.name}</h3>
               </div>
-              <button
-                onClick={() => toggleRule(rule.id)}
-                className={`relative w-8 h-4 rounded-full transition-colors ${rule.enabled ? 'bg-status-online' : 'bg-muted'}`}
-              >
-                <div className={`absolute top-0.5 w-3 h-3 rounded-full bg-foreground transition-transform ${rule.enabled ? 'left-[18px]' : 'left-0.5'}`} />
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => removeRule(rule.id)}
+                  className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-status-offline transition-all"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  onClick={() => toggleRule(rule.id)}
+                  className={`relative w-9 h-5 rounded-full transition-colors ${rule.enabled ? 'bg-status-online' : 'bg-muted'}`}
+                >
+                  <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-foreground transition-transform ${rule.enabled ? 'left-[18px]' : 'left-0.5'}`} />
+                </button>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
               <div>
-                <span className="text-muted-foreground block mb-1">IF</span>
-                <span className="text-foreground font-mono bg-muted px-2 py-1 rounded">{rule.trigger}</span>
+                <span className="text-muted-foreground block mb-1.5">IF</span>
+                <span className="text-foreground font-mono bg-muted px-2.5 py-1.5 rounded-md inline-block">{rule.trigger}</span>
               </div>
               <div>
-                <span className="text-muted-foreground block mb-1">THEN</span>
-                <span className="text-foreground font-mono bg-muted px-2 py-1 rounded">{rule.action}</span>
+                <span className="text-muted-foreground block mb-1.5">THEN</span>
+                <span className="text-foreground font-mono bg-muted px-2.5 py-1.5 rounded-md inline-block">{rule.action}</span>
               </div>
               <div className="flex items-end">
-                <div className="flex items-center gap-1 text-muted-foreground">
+                <div className="flex items-center gap-1.5 text-muted-foreground">
                   <Clock className="w-3 h-3" />
                   <span>{timeAgo(rule.lastTriggered)}</span>
                 </div>
@@ -85,6 +103,14 @@ export default function AutomationPage() {
           </div>
         ))}
       </div>
+
+      {rules.length === 0 && (
+        <div className="text-center py-16">
+          <Zap className="w-6 h-6 text-muted-foreground mx-auto mb-2" />
+          <p className="text-sm text-muted-foreground">No automation rules yet.</p>
+          <p className="text-xs text-muted-foreground mt-1">Create your first rule to automate device behavior.</p>
+        </div>
+      )}
 
       <NewRuleModal open={modalOpen} onClose={() => setModalOpen(false)} onSave={addRule} />
     </div>

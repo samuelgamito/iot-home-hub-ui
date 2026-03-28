@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X } from 'lucide-react';
+import { X, Zap } from 'lucide-react';
 import { mockDevices } from '@/data/mockDevices';
 
 interface NewRuleModalProps {
@@ -10,9 +10,9 @@ interface NewRuleModalProps {
 
 const triggerTypes = [
   { label: 'Schedule', prefix: 'Horário = ' },
-  { label: 'Sensor threshold', prefix: '' },
-  { label: 'Device state', prefix: '' },
-  { label: 'Power usage', prefix: '' },
+  { label: 'Sensor', prefix: '' },
+  { label: 'Device', prefix: '' },
+  { label: 'Power', prefix: '' },
 ];
 
 const actionTypes = [
@@ -47,16 +47,25 @@ export default function NewRuleModal({ open, onClose, onSave }: NewRuleModalProp
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center">
-      <div className="absolute inset-0 bg-background/80" onClick={onClose} />
-      <div className="relative bg-card border border-border rounded-lg w-full max-w-md mx-4 p-5">
-        <div className="flex items-center justify-between mb-5">
-          <h2 className="text-sm font-medium text-foreground">New Rule</h2>
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors">
+      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative bg-card border border-border rounded-lg w-full max-w-md mx-4 overflow-hidden shadow-2xl shadow-black/40">
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-md bg-status-warning/10 flex items-center justify-center">
+              <Zap className="w-3.5 h-3.5 text-status-warning" />
+            </div>
+            <div>
+              <h2 className="text-sm font-medium text-foreground">New Rule</h2>
+              <p className="text-xs text-muted-foreground">Create a local automation</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="w-7 h-7 rounded-md hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors">
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        <div className="space-y-4">
+        <div className="p-5 space-y-4">
           {/* Name */}
           <div>
             <label className="text-xs text-muted-foreground block mb-1.5">Name</label>
@@ -64,20 +73,20 @@ export default function NewRuleModal({ open, onClose, onSave }: NewRuleModalProp
               value={name}
               onChange={e => setName(e.target.value)}
               placeholder="e.g. Night mode"
-              className="w-full px-3 py-1.5 rounded-md bg-muted border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-ring"
+              className="w-full px-3 py-2 rounded-lg bg-muted border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-ring"
             />
           </div>
 
           {/* Trigger type */}
           <div>
             <label className="text-xs text-muted-foreground block mb-1.5">Trigger type</label>
-            <div className="flex gap-px bg-muted rounded-md p-0.5">
+            <div className="grid grid-cols-4 gap-1.5">
               {triggerTypes.map(t => (
                 <button
                   key={t.label}
                   onClick={() => setTriggerType(t.label)}
-                  className={`flex-1 px-2 py-1 rounded text-xs transition-colors ${
-                    triggerType === t.label ? 'bg-accent text-foreground' : 'text-muted-foreground hover:text-foreground'
+                  className={`px-2 py-2 rounded-lg border text-xs transition-all ${
+                    triggerType === t.label ? 'border-foreground/20 bg-accent text-foreground' : 'border-border text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   {t.label}
@@ -86,14 +95,14 @@ export default function NewRuleModal({ open, onClose, onSave }: NewRuleModalProp
             </div>
           </div>
 
-          {/* Trigger condition */}
+          {/* Condition */}
           <div>
             <label className="text-xs text-muted-foreground block mb-1.5">Condition</label>
             <input
               value={triggerValue}
               onChange={e => setTriggerValue(e.target.value)}
               placeholder={triggerType === 'Schedule' ? '23:00' : 'Temperature > 30°C'}
-              className="w-full px-3 py-1.5 rounded-md bg-muted border border-border text-sm text-foreground font-mono placeholder:text-muted-foreground focus:outline-none focus:border-ring"
+              className="w-full px-3 py-2 rounded-lg bg-muted border border-border text-sm text-foreground font-mono placeholder:text-muted-foreground focus:outline-none focus:border-ring"
             />
           </div>
 
@@ -103,7 +112,7 @@ export default function NewRuleModal({ open, onClose, onSave }: NewRuleModalProp
             <select
               value={targetDevice}
               onChange={e => setTargetDevice(e.target.value)}
-              className="w-full px-3 py-1.5 rounded-md bg-muted border border-border text-sm text-foreground focus:outline-none focus:border-ring appearance-none"
+              className="w-full px-3 py-2 rounded-lg bg-muted border border-border text-sm text-foreground focus:outline-none focus:border-ring appearance-none"
             >
               {mockDevices.map(d => (
                 <option key={d.id} value={d.name}>{d.name} — {d.hardwareId}</option>
@@ -117,7 +126,7 @@ export default function NewRuleModal({ open, onClose, onSave }: NewRuleModalProp
             <select
               value={action}
               onChange={e => setAction(e.target.value)}
-              className="w-full px-3 py-1.5 rounded-md bg-muted border border-border text-sm text-foreground focus:outline-none focus:border-ring appearance-none"
+              className="w-full px-3 py-2 rounded-lg bg-muted border border-border text-sm text-foreground focus:outline-none focus:border-ring appearance-none"
             >
               {actionTypes.map(a => (
                 <option key={a} value={a}>{a}</option>
@@ -127,17 +136,17 @@ export default function NewRuleModal({ open, onClose, onSave }: NewRuleModalProp
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end gap-2 mt-6">
+        <div className="flex justify-end gap-2 px-5 py-4 border-t border-border">
           <button
             onClick={onClose}
-            className="px-3 py-1.5 rounded-md text-sm text-muted-foreground hover:text-foreground transition-colors"
+            className="px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleSave}
             disabled={!name.trim() || !triggerValue.trim()}
-            className="px-3 py-1.5 rounded-md bg-foreground text-background text-sm font-medium hover:bg-foreground/90 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            className="px-4 py-2 rounded-lg bg-foreground text-background text-sm font-medium hover:bg-foreground/90 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
           >
             Create Rule
           </button>
